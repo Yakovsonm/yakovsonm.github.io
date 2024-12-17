@@ -4,7 +4,7 @@
     "details": [
       {
         "appID": "869Y96474U.leumit.co.il.mobile-dev",
-        "paths": [ "/Leumitappstore/*" ]
+        "paths": [ "/Leumitappstore","/Leumitappstore/*" ]
       }
     ]
   }
