@@ -3,70 +3,96 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>אפליקציית לאומית</title>
+    <title>אפליקציית לאומית — הורדה</title>
+    <meta name="theme-color" content="#0a6ebd" />
     <style>
-      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; padding: 24px; }
-      .btn { display:inline-block; padding:12px 16px; border:1px solid #ccc; border-radius:8px; text-decoration:none; }
-      .muted { color:#555; font-size:14px; }
+      :root {
+        --brand:#0a6ebd; --text:#0f172a; --muted:#64748b; --bg:#f8fafc; --card:#ffffff; --border:#e2e8f0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; background: radial-gradient(1200px 800px at 80% -10%, #e6f0fa, transparent),
+                             radial-gradient(1000px 600px at -10% 110%, #eef6ff, transparent), var(--bg);
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        color: var(--text); min-height: 100vh; display: grid; place-items: center; padding: 24px;
+      }
+      .card {
+        width: 100%; max-width: 520px; background: var(--card); border: 1px solid var(--border);
+        border-radius: 16px; box-shadow: 0 10px 30px rgba(2, 52, 96, 0.08); padding: 28px;
+        text-align: center;
+      }
+      .logo {
+        width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 16px;
+        display: grid; place-items: center; background: #e7f0fb; color: var(--brand); font-weight: 800; font-size: 28px;
+      }
+      h1 { font-size: 22px; margin: 8px 0 6px; }
+      p.muted { color: var(--muted); margin: 0 0 18px; }
+      .spinner {
+        width: 28px; height: 28px; border: 3px solid #cfe3fb; border-top-color: var(--brand);
+        border-radius: 50%; margin: 18px auto; animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .actions { display: grid; gap: 10px; margin-top: 6px; }
+      .btn {
+        appearance: none; border: 1px solid var(--border); background: var(--brand); color: #fff;
+        padding: 12px 16px; border-radius: 12px; font-weight: 600; text-decoration: none; display: inline-block;
+      }
+      .btn.secondary {
+        background: transparent; color: var(--text); border-color: var(--border);
+      }
+      footer { margin-top: 16px; font-size: 12px; color: var(--muted); }
+      a { color: var(--brand); text-decoration: none; }
+      a:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
-    <h1>לאומית</h1>
-    <p class="muted">ננסה לפתוח את האפליקציה. אם אינה מותקנת – נעביר אותך לחנות.</p>
-
-    <p><a id="openBtn" class="btn" href="#">פתח את האפליקציה</a></p>
-    <p class="muted">אם לא הופנית אוטומטית, אפשר <a id="storeLink" href="#">להוריד את האפליקציה כאן</a>.</p>
+    <main class="card" role="main" aria-live="polite">
+      <div class="logo" aria-hidden="true">ל</div>
+      <h1>מעבירים אותך לחנות האפליקציות…</h1>
+      <p class="muted">אם לא הועברת אוטומטית תוך כמה שניות, אפשר ללחוץ על הכפתור.</p>
+      <div class="spinner" aria-label="טוען"></div>
+      <div class="actions">
+        <a id="openStoreBtn" class="btn" href="#">פתח את החנות עכשיו</a>
+        <a id="storeLink" class="btn secondary" href="#">הורדה ידנית</a>
+      </div>
+      <footer>ל-iOS: App Store · לאנדרואיד: Google Play</footer>
+    </main>
 
     <noscript>
-      יש להפעיל JavaScript. ניתן <a href="https://apps.apple.com/app/id474214396">להוריד את האפליקציה מה-App Store</a>.
+      <p style="text-align:center; margin-top:12px">
+        יש להפעיל JavaScript. הורדה: 
+        <a href="itms-apps://itunes.apple.com/app/id474214396">App Store</a> ·
+        <a href="https://play.google.com/store/apps/details?id=leumit.mobile">Google Play</a>
+      </p>
     </noscript>
 
     <script>
-      // === Settings ===
-      const APP_DEEP_LINK       = "leumit://home"; // TODO: replace with your real deep link
-      const IOS_STORE_URL       = "https://apps.apple.com/app/id474214396";
-      const ANDROID_STORE_URL   = "https://play.google.com/store/apps/details?id=leumit.mobile"; // <-- added
+      // קישורי חנויות
+      const IOS_STORE_URL     = "itms-apps://itunes.apple.com/app/id474214396";
+      const ANDROID_STORE_URL = "https://play.google.com/store/apps/details?id=leumit.mobile";
 
+      // זיהוי פלטפורמה בסיסי
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       const isAndroid = /Android/i.test(ua);
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
 
       const storeUrl = isAndroid ? ANDROID_STORE_URL : IOS_STORE_URL;
-      document.getElementById("storeLink").setAttribute("href", storeUrl);
 
-      function openAppWithFallback() {
-        const start = Date.now();
-        let didHide = false;
+      // קישורי גיבוי גלויים
+      const storeLink = document.getElementById("storeLink");
+      const openStoreBtn = document.getElementById("openStoreBtn");
+      storeLink.setAttribute("href", storeUrl);
+      openStoreBtn.setAttribute("href", storeUrl);
 
-        function onVisibilityChange() {
-          if (document.hidden) {
-            didHide = true;
-            cleanup();
-          }
-        }
-        function cleanup() {
-          document.removeEventListener("visibilitychange", onVisibilityChange);
-          clearTimeout(fallbackTimer);
-        }
+      // מעבר מהיר לחנות (replace כדי למנוע לופ של Back)
+      setTimeout(() => {
+        window.location.replace(storeUrl);
+      }, 300);
 
-        document.addEventListener("visibilitychange", onVisibilityChange);
-        window.location.href = APP_DEEP_LINK;
-
-        const fallbackTimer = setTimeout(() => {
-          if (!didHide && Date.now() - start < 2000) {
-            window.location.href = storeUrl;
-          }
-          cleanup();
-        }, 1500);
-      }
-
-      window.addEventListener("load", () => {
-        if (isAndroid || isIOS) setTimeout(openAppWithFallback, 400);
-      });
-
-      document.getElementById("openBtn").addEventListener("click", (e) => {
+      // גם על לחיצה ידנית
+      openStoreBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        openAppWithFallback();
+        window.location.href = storeUrl;
       });
     </script>
   </body>
