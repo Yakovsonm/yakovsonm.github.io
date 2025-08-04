@@ -1,18 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="he" dir="rtl">
   <head>
-    <title>אפלקציית לאומית</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>אפליקציית לאומית</title>
+    <style>
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; padding: 24px; }
+      .btn { display:inline-block; padding:12px 16px; border:1px solid #ccc; border-radius:8px; text-decoration:none; }
+      .muted { color:#555; font-size:14px; }
+    </style>
   </head>
   <body>
     <h1>לאומית</h1>
-    <h6>Open My App</h6>
+    <p class="muted">ננסה לפתוח את האפליקציה. אם אינה מותקנת – נעביר אותך לחנות.</p>
+
+    <p><a id="openBtn" class="btn" href="#">פתח את האפליקציה</a></p>
+    <p class="muted">אם לא הופנית אוטומטית, אפשר <a id="storeLink" href="#">להוריד את האפליקציה כאן</a>.</p>
+
+    <noscript>
+      יש להפעיל JavaScript. ניתן <a href="https://apps.apple.com/app/id474214396">להוריד את האפליקציה מה-App Store</a>.
+    </noscript>
+
     <script>
-      // If not installed, after 2 seconds, redirect to App Store
-      setTimeout(() => {
-        window.location.href = "https://apps.apple.com/app/id474214396";
-      }, 2000);
+      // === Settings ===
+      const APP_DEEP_LINK       = "leumit://home"; // TODO: replace with your real deep link
+      const IOS_STORE_URL       = "https://apps.apple.com/app/id474214396";
+      const ANDROID_STORE_URL   = "https://play.google.com/store/apps/details?id=leumit.mobile"; // <-- added
+
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isAndroid = /Android/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+      const storeUrl = isAndroid ? ANDROID_STORE_URL : IOS_STORE_URL;
+      document.getElementById("storeLink").setAttribute("href", storeUrl);
+
+      function openAppWithFallback() {
+        const start = Date.now();
+        let didHide = false;
+
+        function onVisibilityChange() {
+          if (document.hidden) {
+            didHide = true;
+            cleanup();
+          }
+        }
+        function cleanup() {
+          document.removeEventListener("visibilitychange", onVisibilityChange);
+          clearTimeout(fallbackTimer);
+        }
+
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        window.location.href = APP_DEEP_LINK;
+
+        const fallbackTimer = setTimeout(() => {
+          if (!didHide && Date.now() - start < 2000) {
+            window.location.href = storeUrl;
+          }
+          cleanup();
+        }, 1500);
+      }
+
+      window.addEventListener("load", () => {
+        if (isAndroid || isIOS) setTimeout(openAppWithFallback, 400);
+      });
+
+      document.getElementById("openBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        openAppWithFallback();
+      });
     </script>
-    <div>Test</div>
-    <p>If you are not redirected, <a href="https://apps.apple.com/app/id474214396">download the app here</a>.</p>
   </body>
 </html>
