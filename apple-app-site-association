@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "leumit.health.services",
+        "appID": "869Y96474U.leumit.health.services",
         "paths": [ "/login","/login/*" ]
       }
     ]
