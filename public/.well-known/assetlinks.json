@@ -4,9 +4,11 @@
     "target": {
       "namespace": "android_app",
       "package_name": "leumit.mobile",
-      "sha256_cert_fingerprints": [
-        "35:F0:F1:4E:75:71:D6:A9:40:E9:20:8B:48:17:E1:0C:BB:DE:0D:82:CC:16:78:0A:3D:78:EC:23:E9:66:77:1C"
-      ]
+      "sha256_cert_fingerprints":
+        [
+            "BC:B2:E4:80:E4:24:33:73:2D:4D:58:99:E6:67:C2:96:99:2D:75:ED:A8:8A:60:D6:38:61:41:80:84:E3:B1:91", 
+            "35:F0:F1:4E:75:71:D6:A9:40:E9:20:8B:48:17:E1:0C:BB:DE:0D:82:CC:16:78:0A:3D:78:EC:23:E9:66:77:1C"
+        ]
     }
   }
 ]
